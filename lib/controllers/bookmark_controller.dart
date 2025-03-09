@@ -14,22 +14,43 @@ class Bookmark {
     'savedAt': savedAt.toIso8601String(),
   };
 
-  Map<String, dynamic> _mangaToJson(Manga manga) => {
+  static Map<String, dynamic> _mangaToJson(Manga manga) => {
     'id': manga.id,
     'title': manga.title,
     'description': manga.description,
     'coverFileName': manga.coverFileName,
+    'rating': manga.rating,
+    'chapterCount': manga.chapterCount,
   };
 
-  factory Bookmark.fromJson(Map<String, dynamic> json) => Bookmark(
-    manga: Manga(
-      id: json['manga']['id'],
-      title: json['manga']['title'],
-      description: json['manga']['description'],
-      coverFileName: json['manga']['coverFileName'],
-    ),
-    savedAt: DateTime.parse(json['savedAt']),
-  );
+  factory Bookmark.fromJson(Map<String, dynamic> json) {
+    try {
+      return Bookmark(
+        manga: Manga(
+          id: json['manga']['id'] ?? '',
+          title: json['manga']['title'] ?? 'Unknown Title',
+          description: json['manga']['description'] ?? '',
+          coverFileName: json['manga']['coverFileName'] ?? '',
+          rating: (json['manga']['rating'] ?? 0.0).toDouble(),
+          chapterCount: (json['manga']['chapterCount'] ?? 0).toInt(),
+        ),
+        savedAt: DateTime.parse(json['savedAt'] ?? DateTime.now().toIso8601String()),
+      );
+    } catch (e) {
+      print('Error parsing Bookmark from JSON: $e');
+      return Bookmark(
+        manga: Manga(
+          id: '',
+          title: 'Invalid Bookmark',
+          description: '',
+          coverFileName: '',
+          rating: 0.0,
+          chapterCount: 0,
+        ),
+        savedAt: DateTime.now(),
+      );
+    }
+  }
 }
 
 class BookmarkController with ChangeNotifier {

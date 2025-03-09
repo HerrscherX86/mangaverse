@@ -57,6 +57,15 @@ class ChapterController with ChangeNotifier {
     }
   }
 
+  void sortChapters({required bool ascending}) {
+    _chapters.sort((a, b) {
+      final aNum = double.tryParse(a.chapterNumber) ?? 0;
+      final bNum = double.tryParse(b.chapterNumber) ?? 0;
+      return ascending ? aNum.compareTo(bNum) : bNum.compareTo(aNum);
+    });
+    notifyListeners();
+  }
+
   // Change the translated language (e.g., 'en' or 'id')
   void setTranslatedLanguage(String language) {
     _translatedLanguage = language;

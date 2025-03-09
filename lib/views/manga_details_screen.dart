@@ -86,34 +86,99 @@ class MangaDetailsScreen extends StatelessWidget {
     );
   }
 
+// Update metadata section with real data
   Widget _buildMetadataSection(TextTheme textTheme) {
-    return Row(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                manga.title,
-                style: textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                children: [
-                  _buildMetadataChip(Icons.star, '4.8'),
-                  _buildMetadataChip(Icons.menu_book, '256 Chapters'),
-                  _buildMetadataChip(Icons.visibility, '1.2M Views'),
-                ],
-              ),
-            ],
+        Text(
+          manga.title,
+          style: textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
         ),
+        const SizedBox(height: 12),
+        _buildStatusRow(),
       ],
+    );
+  }
+
+  // Add number formatting helper
+  String _formatNumber(int number) {
+    if (number > 1000000) return '${(number / 1000000).toStringAsFixed(1)}M';
+    if (number > 1000) return '${(number / 1000).toStringAsFixed(1)}K';
+    return number.toString();
+  }
+
+  Widget _buildStatusRow() {
+    return Row(
+      children: [
+        _buildStatusIndicator('Ongoing', Colors.green),
+        const SizedBox(width: 8),
+        _buildContentRating('18+', Colors.orange),
+        const Spacer(),
+        _buildFollowButton(),
+      ],
+    );
+  }
+
+  Widget _buildStatusIndicator(String text, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.circle, color: color, size: 12),
+          const SizedBox(width: 4),
+          Text(
+            text,
+            style: TextStyle(
+              color: color,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContentRating(String text, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: color),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: color,
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFollowButton() {
+    return OutlinedButton.icon(
+      icon: const Icon(Icons.notifications_none, size: 16),
+      label: const Text('Follow'),
+      style: OutlinedButton.styleFrom(
+        foregroundColor: Colors.white,
+        side: const BorderSide(color: Colors.white54),
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+      ),
+      onPressed: () {
+        // Add follow functionality
+      },
     );
   }
 
@@ -263,6 +328,7 @@ class MangaDetailsScreen extends StatelessWidget {
     );
   }
 
+// Update sorting implementation
   void _showSortOptions(BuildContext context, ChapterController controller) {
     showModalBottomSheet(
       context: context,
@@ -281,7 +347,7 @@ class MangaDetailsScreen extends StatelessWidget {
                 title: const Text('Ascending'),
                 leading: const Icon(Icons.arrow_upward),
                 onTap: () {
-                  // Implement sort logic
+                  controller.sortChapters(ascending: true);
                   Navigator.pop(context);
                 },
               ),
@@ -289,7 +355,7 @@ class MangaDetailsScreen extends StatelessWidget {
                 title: const Text('Descending'),
                 leading: const Icon(Icons.arrow_downward),
                 onTap: () {
-                  // Implement sort logic
+                  controller.sortChapters(ascending: false);
                   Navigator.pop(context);
                 },
               ),
