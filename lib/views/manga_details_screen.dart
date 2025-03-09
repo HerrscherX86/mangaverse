@@ -32,7 +32,7 @@ class MangaDetailsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildMetadataSection(textTheme),
+                  _buildMetadataSection(textTheme, manga),
                   const SizedBox(height: 24),
                   _buildSynopsisSection(textTheme),
                   const SizedBox(height: 24),
@@ -87,7 +87,7 @@ class MangaDetailsScreen extends StatelessWidget {
   }
 
 // Update metadata section with real data
-  Widget _buildMetadataSection(TextTheme textTheme) {
+  Widget _buildMetadataSection(TextTheme textTheme, Manga manga) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -98,6 +98,19 @@ class MangaDetailsScreen extends StatelessWidget {
             color: Colors.white,
           ),
         ),
+        if (manga.altTitles.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: Text(
+              'Also known as: ${manga.altTitles.join(', ')}',
+              style: textTheme.bodyMedium?.copyWith(
+                color: Colors.grey[400],
+                fontStyle: FontStyle.italic,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
         const SizedBox(height: 12),
         _buildStatusRow(),
       ],

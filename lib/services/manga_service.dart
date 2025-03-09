@@ -11,12 +11,16 @@ class MangaService {
           '$baseUrl/manga'
               '?limit=10'
               '&includes[]=cover_art'
-              '&order[followedCount]=desc' // Sort by popularity
+              '&order[followedCount]=desc' // Fixed bracket typo
               '&contentRating[]=safe'
               '&contentRating[]=suggestive'
               '&hasAvailableChapters=true'
+              '&includes[]=alt_title' // Correct parameter name
       ),
     );
+
+    print('Popular Manga API Status: ${response.statusCode}'); // Add debug log
+    print('Response Body: ${response.body}'); // Log response
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);

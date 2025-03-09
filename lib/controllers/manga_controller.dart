@@ -17,8 +17,10 @@ class MangaController with ChangeNotifier {
 
     try {
       _mangaList = await _mangaService.fetchPopularManga();
+      print('Fetched ${_mangaList.length} manga'); // Debug log
     } catch (e) {
-      print('Error fetching popular manga: $e');
+      print('Error in fetchPopularManga: $e'); // Detailed error log
+      _mangaList = [];
     } finally {
       _isLoading = false;
       notifyListeners();
