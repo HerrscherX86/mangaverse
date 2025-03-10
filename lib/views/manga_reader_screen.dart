@@ -27,24 +27,12 @@ class _MangaReaderScreenState extends State<MangaReaderScreen> {
       final controller = Provider.of<ChapterController>(context, listen: false);
       controller.fetchChapterPages(widget.chapterId);
     });
-
-    // Attach scroll listener safely
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        _scrollController.addListener(_handleScroll);
-        setState(() => _listenerAttached = true);
-      }
-    });
   }
 
   void _handleScroll() {
     if (_showControls) {
       setState(() => _showControls = false);
     }
-  }
-
-  void _toggleControls() {
-    setState(() => _showControls = !_showControls);
   }
 
   @override
@@ -54,14 +42,10 @@ class _MangaReaderScreenState extends State<MangaReaderScreen> {
       appBar: _buildAppBar(),
       body: Consumer<ChapterController>(
           builder: (context, controller, _) {
-            return GestureDetector(
-              onTap: _toggleControls,
-              child: Stack(
-                children: [
-                  _buildPageList(controller),
-                  if (_showControls) _buildProgressIndicator(controller),
-                ],
-              ),
+            return Stack(
+              children: [
+                _buildPageList(controller), // This handles swipe naturally
+              ],
             );
           }
       ),
@@ -150,7 +134,7 @@ class _MangaReaderScreenState extends State<MangaReaderScreen> {
   Widget _buildPageList(ChapterController controller) {
     return ListView.builder(
       controller: _scrollController,
-      padding: EdgeInsets.only(top: kToolbarHeight), // Account for app bar height
+      padding: EdgeInsets.zero, // Remove padding
       itemCount: controller.chapterPages.isEmpty
           ? 1
           : controller.chapterPages.length + 1,
@@ -202,13 +186,13 @@ class _MangaReaderScreenState extends State<MangaReaderScreen> {
 
   Widget _buildPageItem(String imageUrl) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 4),
+      margin: EdgeInsets.zero, // Remove margin between pages
       child: InteractiveViewer(
         minScale: 1.0,
         maxScale: 4.0,
         child: CachedNetworkImage(
           imageUrl: imageUrl,
-          fit: BoxFit.contain,
+          fit: BoxFit.contain, // Ensure the image fits the screen width
           httpHeaders: {'Referer': 'https://mangadex.org'},
           progressIndicatorBuilder: (_, __, progress) => Center(
             child: CircularProgressIndicator(
@@ -217,15 +201,16 @@ class _MangaReaderScreenState extends State<MangaReaderScreen> {
             ),
           ),
           errorWidget: (_, url, error) => Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
               Icon(Icons.error, color: Colors.red),
-          SizedBox(height: 8),
-          TextButton(
-            onPressed: () => Provider.of<ChapterController>(context, listen: false)
-                .fetchChapterPages(widget.chapterId),
-            child: Text('Retry', style: TextStyle(color: Colors.white)),
-          )],
+              SizedBox(height: 8),
+              TextButton(
+                onPressed: () => Provider.of<ChapterController>(context, listen: false)
+                    .fetchChapterPages(widget.chapterId),
+                child: Text('Retry', style: TextStyle(color: Colors.white)),
+              ),
+            ],
           ),
         ),
       ),
