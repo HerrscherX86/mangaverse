@@ -86,7 +86,6 @@ class MangaDetailsScreen extends StatelessWidget {
     );
   }
 
-// Update metadata section with real data
   Widget _buildMetadataSection(TextTheme textTheme, Manga manga) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,7 +111,6 @@ class MangaDetailsScreen extends StatelessWidget {
             ),
           ),
         const SizedBox(height: 12),
-        _buildStatusRow(),
       ],
     );
   }

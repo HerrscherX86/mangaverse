@@ -14,6 +14,7 @@ class History {
   static Map<String, dynamic> _mangaToJson(Manga manga) => {
     'id': manga.id,
     'title': manga.title,
+    'altTitles': manga.altTitles, // Add this line
     'description': manga.description,
     'coverFileName': manga.coverFileName,
     'rating': manga.rating,
@@ -26,6 +27,9 @@ class History {
         manga: Manga(
           id: json['manga']['id'] ?? '',
           title: json['manga']['title'] ?? 'Unknown Title',
+          altTitles: (json['manga']['altTitles'] as List<dynamic>?) // Add this
+              ?.cast<String>()
+              .toList() ?? [],
           description: json['manga']['description'] ?? '',
           coverFileName: json['manga']['coverFileName'] ?? '',
           rating: (json['manga']['rating'] ?? 0.0).toDouble(),
@@ -39,6 +43,7 @@ class History {
         manga: Manga(
           id: '',
           title: 'Invalid History',
+          altTitles: [], // Add empty list for invalid history
           description: '',
           coverFileName: '',
           rating: 0.0,

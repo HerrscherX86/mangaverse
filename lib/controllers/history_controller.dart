@@ -19,7 +19,15 @@ class HistoryController with ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     final historyJson = prefs.getStringList(_storageKey) ?? [];
     _history = historyJson
-        .map((jsonStr) => History.fromJson(jsonDecode(jsonStr)))
+        .map((jsonStr) {
+      try {
+        return History.fromJson(jsonDecode(jsonStr));
+      } catch (e) {
+        print('Error loading history item: $e');
+        return null;
+      }
+    })
+        .whereType<History>() // Filter out null values
         .toList();
     notifyListeners();
   }
